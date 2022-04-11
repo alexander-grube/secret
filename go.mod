@@ -1,5 +1,6 @@
 module github.com/alexander-grube/secret
 
+// +heroku goVersion go1.18
 go 1.18
 
 require (
