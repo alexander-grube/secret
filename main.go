@@ -43,7 +43,7 @@ func main() {
 	})
 
 	app.Post("/secret", func(c *fiber.Ctx) error {
-		return rdb.Set(c.Context(), secret.ID, secret, secret.TTL).Err()
+		return rdb.Set(c.Context(), secret.ID, c.JSON(secret), secret.TTL).Err()
 	})
 
 	app.Get("/secret/:id", func(c *fiber.Ctx) error {
