@@ -4,17 +4,21 @@ import (
 	"os"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 )
+
 var (
 	PORT string = ":" + os.Getenv("PORT")
 )
 
 func main() {
-    app := fiber.New()
+	app := fiber.New()
 
-    app.Get("/", func(c *fiber.Ctx) error {
-        return c.SendString("Hello, World 👋!")
-    })
+	app.Use(logger.New())
 
-    app.Listen(PORT)
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString("Hello, World 👋!")
+	})
+
+	app.Listen(PORT)
 }
