@@ -6,6 +6,7 @@ import (
 
 	"github.com/alexander-grube/secret/model"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 
 	"github.com/go-redis/redis/v8"
@@ -19,6 +20,8 @@ func main() {
 	app := fiber.New()
 
 	app.Use(logger.New())
+
+	app.Use(cors.New())
 
 	rdbOptions, err := redis.ParseURL(os.Getenv("REDIS_URL"))
 
