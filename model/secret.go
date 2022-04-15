@@ -8,7 +8,3 @@ type Secret struct {
 	TTL    time.Duration `json:"ttl"`
 	IsSeen bool          `json:"isSeen"`
 }
-
-type SecretResponse struct {
-	Data string `json:"data"`
-}

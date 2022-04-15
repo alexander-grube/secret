@@ -2,7 +2,6 @@ package main
 
 import (
 	"os"
-	"time"
 
 	"github.com/alexander-grube/secret/model"
 	"github.com/gofiber/fiber/v2"
@@ -31,18 +30,24 @@ func main() {
 
 	rdb := redis.NewClient(rdbOptions)
 
-	secret := &model.Secret{
-		ID:     "1",
-		Data:   "secret",
-		TTL:    time.Hour,
-		IsSeen: false,
-	}
+	// secret := &model.Secret{
+	// 	ID:     "1",
+	// 	Data:   "secret",
+	// 	TTL:    time.Hour,
+	// 	IsSeen: false,
+	// }
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World 👋!")
 	})
 
 	app.Post("/secret", func(c *fiber.Ctx) error {
+		// use json from context body
+		secret := &model.Secret{}
+		if err := c.BodyParser(secret); err != nil {
+			return err
+		}
+
 		return rdb.Set(c.Context(), secret.ID, c.JSON(secret), secret.TTL).Err()
 	})
 
