@@ -61,6 +61,9 @@ func main() {
 		id := c.Params("id")
 
 		if secret, err := rdb.Get(c.Context(), id).Result(); err == nil {
+			if err = rdb.Del(c.Context(), id).Err(); err != nil {
+				return err
+			}
 			return c.SendString(secret)
 		}
 
