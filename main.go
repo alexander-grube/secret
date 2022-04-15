@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"os"
 
 	"github.com/alexander-grube/secret/model"
@@ -48,7 +49,12 @@ func main() {
 			return err
 		}
 
-		return rdb.Set(c.Context(), secret.ID, c.JSON(secret), secret.TTL).Err()
+		s, err := json.Marshal(secret)
+		if err != nil {
+			return err
+		}
+
+		return rdb.Set(c.Context(), secret.ID, s, secret.TTL).Err()
 	})
 
 	app.Get("/secret/:id", func(c *fiber.Ctx) error {
