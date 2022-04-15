@@ -22,7 +22,7 @@ func main() {
 
 	app.Use(cors.New())
 
-	rdbOptions, err := redis.ParseURL(os.Getenv("REDIS_URL"))
+	rdbOptions, err := redis.ParseURL(os.Getenv("REDIS_TLS_URL"))
 
 	if err != nil {
 		panic(err)
