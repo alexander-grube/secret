@@ -61,7 +61,7 @@ func main() {
 		id := c.Params("id")
 
 		if secret, err := rdb.Get(c.Context(), id).Result(); err == nil {
-			return json.Unmarshal([]byte(secret), &secret)
+			return c.SendString(secret)
 		}
 
 		return c.Status(fiber.StatusNotFound).SendString("Secret not found")
