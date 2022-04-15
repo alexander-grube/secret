@@ -59,12 +59,14 @@ func main() {
 
 	app.Get("/secret/:id", func(c *fiber.Ctx) error {
 		id := c.Params("id")
+		secret := &model.Secret{}
 
-		if secret, err := rdb.Get(c.Context(), id).Result(); err == nil {
+		if secretJson, err := rdb.Get(c.Context(), id).Result(); err == nil {
 			if err = rdb.Del(c.Context(), id).Err(); err != nil {
 				return err
 			}
-			return c.SendString(secret)
+			json.Unmarshal([]byte(secretJson), &secret)
+			return c.SendString(secret.Data)
 		}
 
 		return c.Status(fiber.StatusNotFound).SendString("Secret not found")
