@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/google/uuid"
 
 	"github.com/go-redis/redis/v8"
 )
@@ -31,13 +32,6 @@ func main() {
 
 	rdb := redis.NewClient(rdbOptions)
 
-	// secret := &model.Secret{
-	// 	ID:     "1",
-	// 	Data:   "secret",
-	// 	TTL:    time.Hour,
-	// 	IsSeen: false,
-	// }
-
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World 👋!")
 	})
@@ -45,6 +39,8 @@ func main() {
 	app.Post("/secret", func(c *fiber.Ctx) error {
 		// use json from context body
 		secret := &model.Secret{}
+		id := uuid.New().String()
+		secret.ID = id
 		if err := c.BodyParser(secret); err != nil {
 			return err
 		}
@@ -54,14 +50,18 @@ func main() {
 			return err
 		}
 
-		return rdb.Set(c.Context(), secret.ID, s, secret.TTL).Err()
+		if err := rdb.Set(c.Context(), id, s, secret.TTL).Err(); err != nil {
+			return err
+		}
+
+		return c.SendString(id)
 	})
 
 	app.Get("/secret/:id", func(c *fiber.Ctx) error {
 		id := c.Params("id")
 
 		if secret, err := rdb.Get(c.Context(), id).Result(); err == nil {
-			return c.JSON(secret)
+			return json.Unmarshal([]byte(secret), &secret)
 		}
 
 		return c.Status(fiber.StatusNotFound).SendString("Secret not found")
